@@ -3,6 +3,7 @@ require "test_helper"
 class ProductsControllerTest < ActionDispatch::IntegrationTest
   setup do
     @product = products(:one)
+    @title = "The great book #{rand(1000)}"
   end
 
   test "should get index" do
@@ -17,7 +18,14 @@ class ProductsControllerTest < ActionDispatch::IntegrationTest
 
   test "should create product" do
     assert_difference("Product.count") do
-      post products_url, params: { product: { description: @product.description, price: @product.price, title: @product.title } }
+      post products_url, params: { 
+        product: { 
+          description: @product.description, 
+          image: file_fixture_upload("lorem.jpg", "image/jpeg"),
+          price: @product.price, 
+          title: @title 
+          } 
+        }
     end
 
     assert_redirected_to product_url(Product.last)
@@ -34,15 +42,22 @@ class ProductsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should update product" do
-    patch product_url(@product), params: { product: { description: @product.description, price: @product.price, title: @product.title } }
+    patch product_url(@product), params: { 
+      product: { 
+        description: @product.description, 
+        price: @product.price,
+        title: @title 
+        } 
+      }
     assert_redirected_to product_url(@product)
   end
 
   test "should destroy product" do
-    assert_difference("Product.count", -1) do
-      delete product_url(@product)
+    assert_raises ActiveRecord::RecordNotDestroyed do
+      delete product_url(products(:two))
     end
 
-    assert_redirected_to products_url
+    assert Product.exists?(products(:two).id)
   end
+
 end

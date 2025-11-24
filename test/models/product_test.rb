@@ -62,9 +62,7 @@ class ProductTest < ActiveSupport::TestCase
 
   test "product is not valid without a unique title - i18n" do
     product = Product.new(title: products(:pragprog).title, description: "yyy", price:1)
-
     product.image.attach(io: File.open("test/fixtures/files/lorem.jpg"), filename: "lorem.jpg", content_type: "image/jpeg")
-
 
     assert product.invalid?
     assert_equal [ I18n.translate("errors.messages.taken") ], product.errors[:title]
